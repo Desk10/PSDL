@@ -1,0 +1,24 @@
+#include<P18F4580.h>
+void T0delay(void);
+#define mybit PORTBbits.RB4   //LED CONNECTED TO RB4
+void main(void)
+{
+	TRISBbits.TRISB4=0;   //output
+	while(1)
+	{
+		mybit=1;  //send 1 to led to turn on
+		T0delay();  //for specific time delay
+		mybit=0; //send 0 to led to turn off
+		T0delay();
+	}
+}
+void T0delay(void)
+{
+	T0CON=0x01;  //timer 0 control reg
+	TMR0H=0xff;  //load high value TH0
+	TMR0L=0x00;  //load lower value TH0
+	T0CONbits.TMR0ON=1;  //TURN ON TIMER
+	while(INTCONbits.TMR0IF==0);  // WAIT FOR TF0 ROLLOVER
+	T0CONbits.TMR0ON=0;   //TURN OFF TIMER
+	INTCONbits.TMR0IF=0;  //HANDLING INTERRUPTS
+}
